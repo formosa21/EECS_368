@@ -45,6 +45,7 @@
                  break;
                  
             case 2:
+                console.log("im here!");
                 if(check_if_shape_2_ok(this.grid, position)){
                     shape_2(this.grid, position, i_th_dropdown);
                  }
@@ -55,7 +56,7 @@
         }
     }
     
-    
+    //Is the shape falling ok
     var IsShapeFalling = function(){
         //from bottom to top
         //check evey dropdown #, and then + 10 to see if it's -1
@@ -66,12 +67,13 @@
         //must be omitted in our loop scan. Otherwise, obviously that above block's position + 10 won't be -1,
         //and in our seven diffent shapes. So we set an array to handle this.
         var record_position = [];
+        flag_result = true;
         
         for(var i = 199; i >= 0; i--){
             if(tetrisGame.grid[i] == tetrisGame.i_th_dropdown){
-                     //detect if falling is ok
+                    //detect if falling is ok
                     if(tetrisGame.grid[i+10] != -1){
-                        return false;
+                        flag_result = false;
                     }
                     //handle
                     if(tetrisGame.grid[i-10] === tetrisGame.i_th_dropdown){
@@ -80,16 +82,18 @@
                     }
             }
         }
-        
-        //store back the handled
-        //at this point, falling is ok, so we store the original above blocks back w.r.t the i_th_dropdown #
+        //store back the handled blocks; at this point, falling is ok, so we store the 
+        //original above blocks back w.r.t the i_th_dropdown #
+        //if no handles, array length = 0. So this block won't execute.
         for(var k = 0; k < record_position.length; k++){
             tetrisGame.grid[record_position[k]] = tetrisGame.i_th_dropdown;
         }
         
-        return true;
+
+        return flag_result;
     }
     
+    //Increment time; increment position
     var IncrementTime = function(){
         // it check reverse up to check each block in shape so blocks don't get conflicted
         for(var i = 189; i >= 0; i--){
@@ -161,11 +165,12 @@
     function shape_2(grid, position, id){
         for(var i = 0; i < 3; i++){
             //build the lower block
-            if(i === 0 || i === 1){
+            if(i == 0 || i == 1){
+                console.log("im here!");
                 grid[position + i + 10] = id;
             }
             //build the upper blocks
-            if(i ==1 || i == 2){
+            if(i == 1 || i == 2){
                 grid[position + i] = id;
             }
         }    
@@ -188,6 +193,7 @@
                     return false;
             }
         }//end for   
+        return true;
     }
     
     
@@ -203,15 +209,16 @@
     while(IsShapeFalling()){
         IncrementTime();
     }
-    /*
+    
     tetrisGame.AddShape(1,2,1);
     while(IsShapeFalling()){
         IncrementTime();
     }
-    */
     
-
-
+    tetrisGame.AddShape(2,0,2);
+    while(IsShapeFalling()){
+        IncrementTime();
+    }
     
     
     print_grid(tetrisGame.grid);
