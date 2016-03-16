@@ -56,7 +56,7 @@
         }
     }
     
-    //Is the shape falling ok
+    //Is the shape 0, 1, 2 falling ok
     var IsShapeFalling = function(){
         //from bottom to top
         //check evey dropdown #, and then + 10 to see if it's -1
@@ -110,7 +110,7 @@
     
     
     
-    //shapes--------------------
+    //shapes-----------------------------------------------------------------------------------------------------
     //shape_0
     function shape_0(grid, position, id){
         //ok to lay bricks; change array values
@@ -202,8 +202,6 @@
     
     
     
-    
-    
     // run game------------------------------------------------------------
     tetrisGame.AddShape(0,4,0);
     while(IsShapeFalling()){
@@ -232,12 +230,25 @@
     
     //function print_grid
     function print_grid(grid){
-        
+        // -1; the default empty space, is printed as '*'
         for(var i = 1; i <= 20; i++){
             var line = [];
             for(var j = (i*10-9); j <= i*10; j++){
-                line += (grid[j-1] + "    ");
+                if(grid[j-1] === -1)
+                    line += (' * '+ "    ");
+                else{
+                    if(grid[j-1].toString().length == 1)
+                        line += ("~~" + grid[j-1] + "    ");
+                    else if(grid[j-1].toString().length == 2)
+                        line += ("~" + grid[j-1] + "    ");
+                    else if(grid[j-1].toString().length == 3)
+                        line += (grid[j-1] + "    ");
+                }
             }
             console.log(line);
         }
     }
+    
+    
+    
+    
