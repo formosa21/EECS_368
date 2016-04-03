@@ -1,41 +1,3 @@
-/*
-	Kuei Hsien Chu's (very rough) Tetris bot 
-	
-	Copy and paste everything here to the Tetris Tester
-	
-	
-	
-	Strategy:
-				
-				A) Optimization
-				We know there are seven different tetris blocks.
-				Roughly speaking, since we know each tetris block comes with four different placement, 
-				so when one of the placement of the block is dropped, and the position is specified --
-				
-						1. For each placement, we test it how it fits to each column (0~9) below
-						
-						2. Recall that each block has its lowest left element, now, after each block drop to its place, 
-						we calculate how many elements to its left to the bottom right corner (199th block in myCurrentState) are not actual tetris blocks (holes).
-						
-						3. We store the permutations that has the least number of holes according 2) as the most optimized path.
-						
-						4. Drop that block.
-	
-				B) Clear up the rows
-				What is more, to detect whether there's a row that has ten consecutative elements together from 
-				any start element J such that J%9 ==0 to an end element K such that K%10 == 0, that has no "holes"	in it
-						1. Started from the 199th element in "myCurrentState"
-						2. Set up a count variable, if that element != -1, cournt += 1
-						3. If the elemet %10 ==0, then count is set to 0 again. 
-						4. If count is 10 before ...
-						
-				(to be contiuned)
-
-*/
-
-
-
-
 tetrisGame = {};
 tetrisGame.currentState = [];
 tetrisGame.initialized = false;
@@ -191,6 +153,8 @@ tetrisGame.IsShapeFalling = function(){
     //must be omitted in our loop scan. Otherwise, obviously that above block's position + 10 won't be -1,
     //and in our seven diffent shapes. So we set an array to handle this.
     
+    
+    
     var record_position = [];
     flag_result = true;
 
@@ -345,7 +309,18 @@ function land_ok_for_left_lower_most_AND_no_crossover(grid, position, column, bl
     
     if(horizontal_distance >= vertical_distance)
         return false;
+    
+	
+    //test case 
+    /*
+    for(var t = 0 ;t < 200; t++){
+    	if(grid[t] != -1){
+    		console.log(ith_shape + " shape "+ column + " column " + "oh!" + t)
+    	}
+    }
+    */
 
+    //check crossover
     //get the left_top_most position in the grid
     left_lower_most = (190 + column - (count_aggregate_column_height* 10)); // left_lower_most in the grid
     console.log("Column: " + column + " " + "  Aggregate heigh at this column: " + count_aggregate_column_height);
@@ -393,6 +368,7 @@ function land_ok_for_left_lower_most_AND_no_crossover(grid, position, column, bl
     }
  
     return true;
+    //left_top_most = left_lower_most - ((blocktype["left_lower_most"][ith_shape] - blocktype["left_top_most"][ith_shape])/4) *10;
 }
 
 function calculate_left_lower_level(grid, column, blocktype, ith_shape){
@@ -419,7 +395,18 @@ function calculate_left_lower_level(grid, column, blocktype, ith_shape){
     console.log("Position code in clcl_l_lower_lvl:" + position_code);
     
     line = 0;
-
+    //convert block into grid
+    /*
+    for(var j = 0; j < 4; j++){
+        for(var a = 3-blocktype["hmlb"][ith_shape]; a < 4; a++){
+            if(position_code[a+line] == 1 && grid[k+a-1] != -1)
+                grid[k + a - 1] = "f";
+            if((k+a)%10 == 9)
+            	break;
+        }
+        k += 10;
+        line += 4;
+    }*/
     four_by_four_start = 3-blocktype["hmlb"][ith_shape];
     for(var j = 0; j < 40; j+=10){
     	var u = 0;
@@ -459,6 +446,45 @@ function calculate_left_lower_level(grid, column, blocktype, ith_shape){
 
 //mechanics
 function draw_shape_on_grid(grid, shape, position, i_th_optimal_shape, id){
+    //start_pos = shape["left_lower_most"][i_th_optimal_shape];
+    /*
+    console.log("start drawing");
+    console.log("i_th_optimal_shape: " + i_th_optimal_shape);
+    position_code = convert(shape["blocks"][i_th_optimal_shape]);
+    
+    pos = shape["left_lower_most"][i_th_optimal_shape]%4 ;
+    pos_orig = shape["left_lower_most"][i_th_optimal_shape];
+    position_code = convert(shape["blocks"][i_th_optimal_shape]);
+    console.log("Position CODE at: " + position_code[pos_orig]);
+    
+    
+    console.log("EXP-------------------------");
+    position_code1 = convert(shape["blocks"][i_th_optimal_shape]);
+    left_lower_most1 = shape["left_lower_most"][i_th_optimal_shape];
+    hmlb1 = shape["hmlb"][i_th_optimal_shape];
+    start_pos = position + (Math.floor((15-left_lower_most1)/4))*10 + hmlb1; // right lowest corner
+    console.log("This position:" + position);
+    console.log("PC1: " + position_code1 + " LWM: " + left_lower_most1 + " hmlb: " + hmlb1 + " START_POS: " + start_pos);
+    console.log("END EXP---------------------");
+    
+    console.log("POS:" + pos);
+    console.log("SBH " + shape["hmlb"][i_th_optimal_shape] + 1);
+    for(var i = position; i > (position-40); i++){
+    	k = 0;
+    	console.log("position i : " + i);
+    	for(var j = pos; j < shape["hmlb"][i_th_optimal_shape] + 1; j++){
+    		console.log("position j : " + j);
+    		if(position_code[pos_orig + k] != 1)
+    		{}
+    		else
+    			grid[position + j] = id;
+    	}
+    	k -=4;
+    	i -= 10;
+    	if(i < 10 || i > 200)
+    		break;
+    }
+    */
 
     position_code = convert(shape["blocks"][i_th_optimal_shape]);
     left_lower_most = shape["left_lower_most"][i_th_optimal_shape];
@@ -567,12 +593,43 @@ function chk_line_and_collect_points(grid){
 }
 
 
-// run game----------------------
-tetrisGame.AddShape(4,4,0); // It seems like this must be here so the game could be activated
 
+
+
+//--------test
+// run game------------------------------------------------------------
+tetrisGame.AddShape(4,4,0);/*
+while(tetrisGame.IsShapeFalling()){
+	tetrisGame.IncrementTime();
+}
+
+tetrisGame.AddShape(0,4,1);
+while(tetrisGame.IsShapeFalling()){
+	tetrisGame.IncrementTime();
+}
+
+tetrisGame.AddShape(4,4,2);
+while(tetrisGame.IsShapeFalling()){
+	tetrisGame.IncrementTime();
+}
+tetrisGame.AddShape(3,4,3)
+while(tetrisGame.IsShapeFalling()){
+	tetrisGame.IncrementTime();
+}
+tetrisGame.AddShape(0,4,4)
+
+while(tetrisGame.IsShapeFalling()){
+	tetrisGame.IncrementTime();
+}
+
+tetrisGame.AddShape(3,2,5)
+while(tetrisGame.IsShapeFalling()){
+	tetrisGame.IncrementTime();
+}
+
+*/
 
 //function print_grid
-
 function print_grid(grid){
     // -1; the default empty space, is printed as '*'
     for(var i = 1; i <= 20; i++){
